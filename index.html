@@ -3,71 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DarkDrop P2P</title>
-    <link rel="manifest" href="manifest.json">
+    <title>DARKDROP | NAVIN CHAUDHARY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; max-width: 400px; margin: 40px auto; padding: 20px; text-align: center; }
-        .card { background: #111; padding: 20px; border-radius: 15px; border: 1px solid #333; margin-top: 20px; }
-        button { width: 100%; padding: 15px; margin-top: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .btn-send { background: #3b82f6; color: white; }
-        .btn-receive { background: #10b981; color: white; }
-        input { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; background: #222; border: 1px solid #444; color: #fff; box-sizing: border-box; text-align: center; }
-        .pin-box { font-size: 32px; font-weight: bold; color: #3b82f6; margin: 15px 0; }
+        :root {
+            --primary: #ffffff;
+            --primary-hover: #e2e8f0;
+            --bg-main: #000000;
+            --bg-card: rgba(10, 10, 10, 0.8);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #666666;
+        }
+
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Space Grotesk', sans-serif; 
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #particle-canvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            width: 90%;
+            max-width: 440px;
+            z-index: 1;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.02);
+        }
+
+        header { margin-bottom: 2.5rem; }
+        h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: 5px; text-transform: uppercase; }
+        .tagline { font-size: 0.7rem; color: var(--text-muted); margin-top: 8px; letter-spacing: 3px; font-weight: 300; }
+
+        button {
+            width: 100%;
+            padding: 1.1rem;
+            margin-top: 1rem;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 2px;
+        }
+        button:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover { background: rgba(255, 255, 255, 0.05); border-color: var(--primary); }
+
+        input {
+            width: 100%;
+            padding: 1.1rem;
+            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            color: #fff;
+            text-align: center;
+            font-size: 1.1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); background: rgba(255, 255, 255, 0.07); }
+
+        .pin-box {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1.5rem 0;
+            letter-spacing: 10px;
+            padding: 10px;
+        }
+
+        #status { font-size: 0.75rem; margin-top: 15px; color: var(--text-muted); }
+
+        .author-footer {
+            margin-top: 2.5rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            z-index: 1;
+        }
+        .author-footer span { color: #ff0000; }
     </style>
 </head>
 <body>
 
-    <h1>🚀 DarkDrop</h1>
-    <p style="color: #888;">Direct P2P File Transfer</p>
+    <canvas id="particle-canvas"></canvas>
 
-    <div id="home-screen" class="card">
-        <button class="btn-send" onclick="initSend()">📤 SEND FILE</button>
-        <button class="btn-receive" onclick="initReceive()">📥 RECEIVE FILE</button>
+    <div class="card">
+        <header>
+            <h1>DARKDROP</h1>
+            <p class="tagline">P2P DATA TERMINAL</p>
+        </header>
+
+        <div id="home-screen">
+            <button onclick="initSend()">SEND FILE</button>
+            <button class="btn-outline" onclick="initReceive()">RECEIVE FILE</button>
+        </div>
+
+        <div id="receive-screen" style="display:none;">
+            <p style="font-size: 0.75rem; color: var(--text-muted);">SHARE THIS PIN:</p>
+            <div class="pin-box" id="my-pin">00000</div>
+            <p id="receive-status" style="font-size: 0.7rem; letter-spacing: 1px;">WAITING FOR PEER...</p>
+        </div>
+
+        <div id="send-screen" style="display:none;">
+            <p style="font-size: 0.75rem; color: var(--text-muted);">ENTER TARGET PIN:</p>
+            <input type="number" id="target-pin" placeholder="-----">
+            <button onclick="connectToPeer()">ESTABLISH LINK</button>
+            <p id="send-status" style="font-size: 0.7rem; margin-top: 15px;"></p>
+        </div>
+
+        <div id="workspace" style="display:none;">
+            <p style="color: var(--primary); font-size: 0.75rem; margin-bottom: 1.5rem; letter-spacing: 2px;">CONNECTION SECURE</p>
+            <input type="file" id="file-input" style="font-size: 0.7rem;">
+            <button id="send-btn" onclick="sendFile()">PUSH DATA</button>
+            <p id="transfer-status" style="font-size: 0.7rem; margin-top: 15px; color: var(--text-muted);"></p>
+        </div>
     </div>
 
-    <div id="receive-screen" class="card" style="display:none;">
-        <p>Share this PIN:</p>
-        <div class="pin-box" id="my-pin">...</div>
-        <p style="font-size: 12px; color: #666;">Waiting for sender...</p>
-    </div>
-
-    <div id="send-screen" class="card" style="display:none;">
-        <input type="number" id="target-pin" placeholder="Enter Receiver's PIN">
-        <button class="btn-send" onclick="connectToPeer()">CONNECT</button>
-    </div>
-
-    <div id="workspace" class="card" style="display:none;">
-        <p id="status" style="color: #10b981;">✅ Connected!</p>
-        <input type="file" id="file-input">
-        <button class="btn-send" onclick="sendFile()">SEND NOW</button>
+    <div class="author-footer">
+        Made with <span>❤</span> Navin Chaudhary
     </div>
 
     <script>
-        // PWA Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let particles = [];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
+        function initParticles() { for (let i = 0; i < 80; i++) particles.push(new Particle()); }
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        initParticles(); animate();
 
         let peer, conn;
+        const peerOptions = { debug: 1, secure: true };
 
         function initSend() {
             document.getElementById('home-screen').style.display = 'none';
             document.getElementById('send-screen').style.display = 'block';
-            peer = new Peer();
+            peer = new Peer(peerOptions);
         }
 
         function initReceive() {
             document.getElementById('home-screen').style.display = 'none';
             document.getElementById('receive-screen').style.display = 'block';
             const pin = Math.floor(10000 + Math.random() * 90000).toString();
-            peer = new Peer(pin);
-            peer.on('open', id => document.getElementById('my-pin').innerText = id);
+            peer = new Peer(pin, peerOptions);
+            peer.on('open', id => { document.getElementById('my-pin').innerText = id; });
             peer.on('connection', c => { conn = c; setupConn(); });
         }
 
         function connectToPeer() {
             const pin = document.getElementById('target-pin').value;
+            if(pin.length !== 5) return;
+            document.getElementById('send-status').innerText = "CONNECTING...";
             conn = peer.connect(pin);
             setupConn();
         }
@@ -84,7 +229,10 @@
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(b);
                     a.download = data.name;
+                    document.body.appendChild(a);
                     a.click();
+                    document.body.removeChild(a);
+                    document.getElementById('transfer-status').innerText = "RECEIVED: " + data.name;
                 }
             });
         }
@@ -92,8 +240,12 @@
         function sendFile() {
             const f = document.getElementById('file-input').files[0];
             if(!f) return;
+            document.getElementById('send-btn').innerText = "TRANSFERRING...";
             conn.send({ file: f, name: f.name });
-            alert("File Sent!");
+            setTimeout(() => {
+                document.getElementById('send-btn').innerText = "DATA PUSHED";
+                document.getElementById('transfer-status').innerText = "FILE SENT SUCCESSFULLY.";
+            }, 1000);
         }
     </script>
 </body>
