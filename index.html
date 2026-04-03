@@ -1,18 +1,100 @@
-<link rel="manifest" href="manifest.json">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DarkDrop P2P</title>
+    <link rel="manifest" href="manifest.json">
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; max-width: 400px; margin: 40px auto; padding: 20px; text-align: center; }
+        .card { background: #111; padding: 20px; border-radius: 15px; border: 1px solid #333; margin-top: 20px; }
+        button { width: 100%; padding: 15px; margin-top: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-send { background: #3b82f6; color: white; }
+        .btn-receive { background: #10b981; color: white; }
+        input { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; background: #222; border: 1px solid #444; color: #fff; box-sizing: border-box; text-align: center; }
+        .pin-box { font-size: 32px; font-weight: bold; color: #3b82f6; margin: 15px 0; }
+    </style>
+</head>
+<body>
 
-<script>
-  // Register Service Worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
+    <h1>🚀 DarkDrop</h1>
+    <p style="color: #888;">Direct P2P File Transfer</p>
 
-  // Check if file was shared from System Menu
-  window.addEventListener('DOMContentLoaded', () => {
-    const parsedUrl = new URL(window.location);
-    // Agar kisi ne gallery se "Share" dabakar ye app kholi hai
-    if (parsedUrl.searchParams.get('title') || parsedUrl.searchParams.get('text')) {
-       console.log("File shared from System!");
-       // Yahan tum direct 'Send Mode' activate karwa sakte ho
-    }
-  });
-</script>
+    <div id="home-screen" class="card">
+        <button class="btn-send" onclick="initSend()">📤 SEND FILE</button>
+        <button class="btn-receive" onclick="initReceive()">📥 RECEIVE FILE</button>
+    </div>
+
+    <div id="receive-screen" class="card" style="display:none;">
+        <p>Share this PIN:</p>
+        <div class="pin-box" id="my-pin">...</div>
+        <p style="font-size: 12px; color: #666;">Waiting for sender...</p>
+    </div>
+
+    <div id="send-screen" class="card" style="display:none;">
+        <input type="number" id="target-pin" placeholder="Enter Receiver's PIN">
+        <button class="btn-send" onclick="connectToPeer()">CONNECT</button>
+    </div>
+
+    <div id="workspace" class="card" style="display:none;">
+        <p id="status" style="color: #10b981;">✅ Connected!</p>
+        <input type="file" id="file-input">
+        <button class="btn-send" onclick="sendFile()">SEND NOW</button>
+    </div>
+
+    <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
+        let peer, conn;
+
+        function initSend() {
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById('send-screen').style.display = 'block';
+            peer = new Peer();
+        }
+
+        function initReceive() {
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById('receive-screen').style.display = 'block';
+            const pin = Math.floor(10000 + Math.random() * 90000).toString();
+            peer = new Peer(pin);
+            peer.on('open', id => document.getElementById('my-pin').innerText = id);
+            peer.on('connection', c => { conn = c; setupConn(); });
+        }
+
+        function connectToPeer() {
+            const pin = document.getElementById('target-pin').value;
+            conn = peer.connect(pin);
+            setupConn();
+        }
+
+        function setupConn() {
+            conn.on('open', () => {
+                document.getElementById('receive-screen').style.display = 'none';
+                document.getElementById('send-screen').style.display = 'none';
+                document.getElementById('workspace').style.display = 'block';
+            });
+            conn.on('data', data => {
+                if(data.file) {
+                    const b = new Blob([data.file]);
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(b);
+                    a.download = data.name;
+                    a.click();
+                }
+            });
+        }
+
+        function sendFile() {
+            const f = document.getElementById('file-input').files[0];
+            if(!f) return;
+            conn.send({ file: f, name: f.name });
+            alert("File Sent!");
+        }
+    </script>
+</body>
+</html>
