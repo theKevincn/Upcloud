@@ -1,0 +1,24 @@
+{
+  "short_name": "DarkDrop",
+  "name": "DarkDrop P2P Transfer",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/553/553805.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#121212",
+  "background_color": "#121212",
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
