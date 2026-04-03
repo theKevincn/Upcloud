@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DARKDROP | NAVIN CHAUDHARY</title>
+    <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
@@ -11,16 +12,14 @@
             --primary: #ffffff;
             --primary-hover: #e2e8f0;
             --bg-main: #000000;
-            --bg-card: rgba(10, 10, 10, 0.8);
+            --bg-card: rgba(10, 10, 10, 0.9);
             --border: rgba(255, 255, 255, 0.1);
             --text-main: #ffffff;
             --text-muted: #666666;
+            --accent: #3b82f6;
         }
 
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            font-family: 'Space Grotesk', sans-serif; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Space Grotesk', sans-serif; }
 
         body {
             min-height: 100vh;
@@ -43,78 +42,74 @@
 
         .card {
             background: var(--bg-card);
-            backdrop-filter: blur(30px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            padding: 3rem;
+            padding: 2.5rem;
             width: 90%;
-            max-width: 440px;
+            max-width: 420px;
             z-index: 1;
             position: relative;
             text-align: center;
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
         }
 
-        header { margin-bottom: 2.5rem; }
-        h1 { font-size: 1.8rem; font-weight: 700; letter-spacing: 5px; text-transform: uppercase; }
-        .tagline { font-size: 0.7rem; color: var(--text-muted); margin-top: 8px; letter-spacing: 3px; font-weight: 300; }
+        header { margin-bottom: 2rem; }
+        h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: 6px; text-transform: uppercase; color: var(--primary); }
+        .tagline { font-size: 0.65rem; color: var(--text-muted); margin-top: 8px; letter-spacing: 4px; }
 
         button {
             width: 100%;
-            padding: 1.1rem;
+            padding: 1rem;
             margin-top: 1rem;
             background: var(--primary);
             color: #000;
             border: none;
             font-weight: 700;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.3s;
             letter-spacing: 2px;
         }
         button:hover { background: var(--primary-hover); transform: translateY(-2px); }
-        button:active { transform: translateY(0); }
         
         .btn-outline {
             background: transparent;
             color: var(--text-main);
             border: 1px solid var(--border);
         }
-        .btn-outline:hover { background: rgba(255, 255, 255, 0.05); border-color: var(--primary); }
+        .btn-outline:hover { border-color: var(--primary); background: rgba(255,255,255,0.05); }
 
         input {
             width: 100%;
-            padding: 1.1rem;
+            padding: 1rem;
             margin-top: 1rem;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
             color: #fff;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             outline: none;
-            transition: 0.3s;
         }
-        input:focus { border-color: var(--primary); background: rgba(255, 255, 255, 0.07); }
 
         .pin-box {
-            font-size: 2.8rem;
+            font-size: 3rem;
             font-weight: 700;
-            color: var(--primary);
-            margin: 1.5rem 0;
-            letter-spacing: 10px;
-            padding: 10px;
+            color: var(--accent);
+            margin: 1rem 0;
+            letter-spacing: 8px;
         }
 
-        #status { font-size: 0.75rem; margin-top: 15px; color: var(--text-muted); }
+        .status-text { font-size: 0.7rem; color: var(--text-muted); margin-top: 10px; letter-spacing: 1px; }
 
-        .author-footer {
-            margin-top: 2.5rem;
-            font-size: 0.75rem;
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
-            letter-spacing: 1px;
             z-index: 1;
+            letter-spacing: 1px;
         }
-        .author-footer span { color: #ff0000; }
+        .footer span { color: #ff3e3e; }
     </style>
 </head>
 <body>
@@ -124,52 +119,53 @@
     <div class="card">
         <header>
             <h1>DARKDROP</h1>
-            <p class="tagline">P2P DATA TERMINAL</p>
+            <p class="tagline">P2P SECURE TERMINAL</p>
         </header>
 
         <div id="home-screen">
-            <button onclick="initSend()">SEND FILE</button>
-            <button class="btn-outline" onclick="initReceive()">RECEIVE FILE</button>
+            <button onclick="initSend()">SEND DATA</button>
+            <button class="btn-outline" onclick="initReceive()">RECEIVE DATA</button>
         </div>
 
         <div id="receive-screen" style="display:none;">
-            <p style="font-size: 0.75rem; color: var(--text-muted);">SHARE THIS PIN:</p>
-            <div class="pin-box" id="my-pin">00000</div>
-            <p id="receive-status" style="font-size: 0.7rem; letter-spacing: 1px;">WAITING FOR PEER...</p>
+            <p class="status-text">YOUR TERMINAL PIN:</p>
+            <div class="pin-box" id="my-pin">-----</div>
+            <p class="status-text" id="receive-status">WAITING FOR LINK...</p>
         </div>
 
         <div id="send-screen" style="display:none;">
-            <p style="font-size: 0.75rem; color: var(--text-muted);">ENTER TARGET PIN:</p>
-            <input type="number" id="target-pin" placeholder="-----">
+            <input type="number" id="target-pin" placeholder="ENTER PIN">
             <button onclick="connectToPeer()">ESTABLISH LINK</button>
-            <p id="send-status" style="font-size: 0.7rem; margin-top: 15px;"></p>
+            <p class="status-text" id="send-status">READY TO CONNECT</p>
         </div>
 
         <div id="workspace" style="display:none;">
-            <p style="color: var(--primary); font-size: 0.75rem; margin-bottom: 1.5rem; letter-spacing: 2px;">CONNECTION SECURE</p>
-            <input type="file" id="file-input" style="font-size: 0.7rem;">
-            <button id="send-btn" onclick="sendFile()">PUSH DATA</button>
-            <p id="transfer-status" style="font-size: 0.7rem; margin-top: 15px; color: var(--text-muted);"></p>
+            <p style="font-size: 0.75rem; color: var(--accent); margin-bottom: 1rem;">LINK ESTABLISHED</p>
+            <input type="file" id="file-input" style="font-size: 0.8rem;">
+            <button id="send-btn" onclick="sendFile()">PUSH FILE</button>
+            <p class="status-text" id="transfer-status"></p>
         </div>
     </div>
 
-    <div class="author-footer">
-        Made with <span>❤</span> Navin Chaudhary
+    <div class="footer">
+        PROJECT DARKDROP // BY <span>❤</span> NAVIN CHAUDHARY
     </div>
 
     <script>
+        // PWA
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+
+        // Background Particles
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         let particles = [];
-
         class Particle {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5;
-                this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * 0.4 - 0.2;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
             }
             update() {
                 this.x += this.speedX; this.y += this.speedY;
@@ -177,22 +173,26 @@
                 if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
             }
             draw() {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.beginPath(); ctx.arc(this.x, this.y, 1, 0, Math.PI * 2); ctx.fill();
             }
         }
-        function initParticles() { for (let i = 0; i < 80; i++) particles.push(new Particle()); }
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animate);
         }
-        initParticles(); animate();
+        animate();
 
+        // P2P Logic
         let peer, conn;
-        const peerOptions = { debug: 1, secure: true };
+        const peerOptions = { 
+            debug: 1, 
+            secure: true,
+            port: 443,
+            host: '0.peerjs.com'
+        };
 
         function initSend() {
             document.getElementById('home-screen').style.display = 'none';
@@ -211,8 +211,8 @@
 
         function connectToPeer() {
             const pin = document.getElementById('target-pin').value;
-            if(pin.length !== 5) return;
-            document.getElementById('send-status').innerText = "CONNECTING...";
+            if(pin.length !== 5) return alert("Enter 5-digit PIN");
+            document.getElementById('send-status').innerText = "LINKING...";
             conn = peer.connect(pin);
             setupConn();
         }
@@ -229,9 +229,7 @@
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(b);
                     a.download = data.name;
-                    document.body.appendChild(a);
                     a.click();
-                    document.body.removeChild(a);
                     document.getElementById('transfer-status').innerText = "RECEIVED: " + data.name;
                 }
             });
@@ -240,11 +238,11 @@
         function sendFile() {
             const f = document.getElementById('file-input').files[0];
             if(!f) return;
-            document.getElementById('send-btn').innerText = "TRANSFERRING...";
+            document.getElementById('send-btn').innerText = "PUSHING...";
             conn.send({ file: f, name: f.name });
             setTimeout(() => {
                 document.getElementById('send-btn').innerText = "DATA PUSHED";
-                document.getElementById('transfer-status').innerText = "FILE SENT SUCCESSFULLY.";
+                document.getElementById('transfer-status').innerText = "SUCCESSFULLY SENT: " + f.name;
             }, 1000);
         }
     </script>
