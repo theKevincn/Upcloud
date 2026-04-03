@@ -1,0 +1,18 @@
+<link rel="manifest" href="manifest.json">
+
+<script>
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+
+  // Check if file was shared from System Menu
+  window.addEventListener('DOMContentLoaded', () => {
+    const parsedUrl = new URL(window.location);
+    // Agar kisi ne gallery se "Share" dabakar ye app kholi hai
+    if (parsedUrl.searchParams.get('title') || parsedUrl.searchParams.get('text')) {
+       console.log("File shared from System!");
+       // Yahan tum direct 'Send Mode' activate karwa sakte ho
+    }
+  });
+</script>
