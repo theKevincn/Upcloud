@@ -11,110 +11,253 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
     <style>
+        /* --- Color Variables --- */
         :root {
-            --bg: #ffffff; --text: #000000; --card-bg: rgba(255, 255, 255, 0.85);
-            --border: #e5e5e7; --btn-sec: #f5f5f7; --accent: #000000; 
-            --status-off: #8e8e93; --status-on: #34c759;
+            --bg: #ffffff; 
+            --text: #000000; 
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --border: #e5e5e7; 
+            --btn-sec: #f5f5f7; 
+            --accent: #000000; 
+            --status-off: #8e8e93; 
+            --status-on: #34c759;
         }
 
         [data-theme="dark"] {
-            --bg: #050505; --text: #ffffff; --card-bg: rgba(20, 20, 20, 0.9);
-            --border: #2c2c2e; --btn-sec: #1c1c1e; --accent: #ffffff;
+            --bg: #050505; 
+            --text: #ffffff; 
+            --card-bg: rgba(20, 20, 20, 0.9);
+            --border: #2c2c2e; 
+            --btn-sec: #1c1c1e; 
+            --accent: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: background 0.4s, color 0.4s; -webkit-tap-highlight-color: transparent; }
-        body { height: 100vh; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        /* --- Global Reset --- */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif; 
+            transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease; 
+            -webkit-tap-highlight-color: transparent; 
+        }
 
-        /* Loader & Intro */
-        #loader { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--text); animation: spin .8s linear infinite; }
+        body { 
+            height: 100vh; 
+            background: var(--bg); 
+            color: var(--text); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden; 
+        }
+
+        /* --- Loader & Intro Animations --- */
+        #loader { 
+            position: fixed; inset: 0; background: var(--bg); 
+            display: flex; align-items: center; justify-content: center; z-index: 9999; 
+        }
+        .spinner { 
+            width: 36px; height: 36px; border-radius: 50%; 
+            border: 3px solid var(--border); border-top-color: var(--text); 
+            animation: spin .8s linear infinite; 
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .hide { opacity: 0; visibility: hidden; transition: 0.5s; }
+        .hide { opacity: 0; visibility: hidden; transition: 0.5s ease; }
 
-        #intro { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; opacity: 0; z-index: 9998; pointer-events: none; }
+        #intro { 
+            position: fixed; inset: 0; background: var(--bg); 
+            display: flex; align-items: center; justify-content: center; 
+            opacity: 0; z-index: 9998; pointer-events: none; 
+        }
         #intro.show { animation: fadeIn 1s ease forwards; }
         @keyframes fadeIn { to { opacity: 1; } }
-        .glitch { font-size: 46px; letter-spacing: -1.5px; color: var(--text); }
-        .web-i { font-weight: 800; text-transform: uppercase; margin-right: -2px; }
+        
+        .glitch { font-size: 48px; letter-spacing: -1.5px; color: var(--text); display: flex; align-items: center;}
+        .web-i { font-weight: 800; text-transform: uppercase; margin-right: 2px; }
         .drop-i { font-weight: 300; font-style: italic; }
 
-        /* Main UI */
-        #main-app { opacity: 0; transition: opacity 1s ease; width: 100%; display: flex; justify-content: center; align-items: center; visibility: hidden; }
+        /* --- Main Application Layout --- */
+        #main-app { 
+            opacity: 0; transition: opacity 1s ease; width: 100%; 
+            display: flex; justify-content: center; align-items: center; visibility: hidden; 
+        }
         #main-app.visible { opacity: 1; visibility: visible; }
         #particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        .top-nav { position: absolute; top: 25px; left: 25px; right: 25px; display: flex; justify-content: space-between; z-index: 100; align-items: center; }
-        .icon-btn { background: var(--btn-sec); border: 1px solid var(--border); width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text); z-index: 101; }
+        /* --- Navigation & Controls --- */
+        .top-nav { 
+            position: absolute; top: 30px; left: 30px; right: 30px; 
+            display: flex; justify-content: space-between; z-index: 100; align-items: center; 
+        }
+        .icon-btn { 
+            background: var(--btn-sec); border: 1px solid var(--border); 
+            width: 48px; height: 48px; border-radius: 14px; 
+            display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; color: var(--text); z-index: 101; 
+        }
+        .icon-btn:active { transform: scale(0.92); }
         
-        .pulse-wrapper { display: flex; align-items: center; gap: 12px; }
-        .dot-indicator { width: 10px; height: 10px; border-radius: 50%; background: var(--status-off); position: relative; margin-right: 5px; }
+        /* Status Pulse in Top Right */
+        .pulse-wrapper { display: flex; align-items: center; gap: 14px; }
+        .dot-indicator { 
+            width: 10px; height: 10px; border-radius: 50%; 
+            background: var(--status-off); position: relative; margin-right: 5px; 
+            transition: background 0.3s ease;
+        }
         .dot-indicator.active { background: var(--status-on); }
-        .dot-indicator::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid currentColor; animation: pulse 1.5s infinite; opacity: 0.6; }
+        .dot-indicator::after { 
+            content: ""; position: absolute; inset: -4px; 
+            border-radius: 50%; border: 1px solid currentColor; 
+            animation: pulse 1.5s infinite; opacity: 0.6; 
+        }
         @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
 
-        /* Side Menu & Profile */
-        .side-menu { position: fixed; top: 0; left: -320px; width: 320px; height: 100%; background: var(--card-bg); backdrop-filter: blur(40px); border-right: 1px solid var(--border); z-index: 300; padding: 60px 30px; transition: left 0.4s ease; display: flex; flex-direction: column; overflow-y: auto; }
+        /* --- Side Menu --- */
+        .side-menu { 
+            position: fixed; top: 0; left: -340px; width: 340px; height: 100%; 
+            background: var(--card-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border-right: 1px solid var(--border); z-index: 300; padding: 60px 35px; 
+            transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; overflow-y: auto; 
+        }
         .side-menu.active { left: 0; }
-        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 250; display: none; backdrop-filter: blur(2px); }
-        .menu-item { padding: 16px 0; border-bottom: 1px solid var(--border); cursor: pointer; font-weight: 600; font-size: 0.95rem; color: var(--text); }
-        
+        .menu-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.4); z-index: 250; display: none; backdrop-filter: blur(3px); 
+        }
+        .menu-item { 
+            padding: 18px 0; border-bottom: 1px solid var(--border); 
+            cursor: pointer; font-weight: 600; font-size: 1rem; color: var(--text); 
+            transition: opacity 0.2s ease;
+        }
+        .menu-item:active { opacity: 0.5; }
+
         /* Auth Styles */
-        .auth-card { background: var(--btn-sec); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
-        .profile-pic { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
-        .profile-name { font-weight: 700; font-size: 1.1rem; }
-        .profile-email { font-size: 0.75rem; color: #86868b; }
+        .auth-card { 
+            background: var(--btn-sec); border: 1px solid var(--border); 
+            border-radius: 22px; padding: 25px; margin-bottom: 25px; 
+            display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; 
+        }
+        .profile-pic { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
+        .profile-name { font-weight: 700; font-size: 1.1rem; color: var(--text); }
+        .profile-email { font-size: 0.8rem; color: #86868b; }
         
         /* Recent Connections */
-        .recent-box { background: transparent; border: 1px solid var(--border); border-radius: 16px; padding: 15px; margin-bottom: 20px; }
-        .recent-title { font-size: 0.7rem; font-weight: 700; color: #86868b; letter-spacing: 1px; margin-bottom: 10px; text-transform: uppercase; }
-        .recent-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; border-bottom: 1px solid var(--border); }
+        .recent-box { background: transparent; border: 1px solid var(--border); border-radius: 18px; padding: 20px; margin-bottom: 25px; }
+        .recent-title { font-size: 0.75rem; font-weight: 700; color: #86868b; letter-spacing: 1.5px; margin-bottom: 15px; text-transform: uppercase; }
+        .recent-item { 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 10px 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; 
+            border-bottom: 1px solid var(--border); color: var(--text);
+        }
         .recent-item:last-child { border-bottom: none; padding-bottom: 0; }
 
-        /* Card Architecture */
-        .card { position: relative; background: var(--card-bg); backdrop-filter: blur(30px); border: 1px solid var(--border); padding: 3rem 2.2rem; width: 92%; max-width: 380px; z-index: 10; border-radius: 40px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.08); perspective: 1200px; }
-        .neon-bar { position: absolute; top: 0; left: 0; height: 4px; background: var(--text); width: 0%; opacity: 0; z-index: 20; box-shadow: 0 0 15px var(--text); }
+        /* --- Main Card Architecture --- */
+        .card { 
+            position: relative; background: var(--card-bg); 
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border); padding: 3.5rem 2.5rem; 
+            width: 92%; max-width: 400px; z-index: 10; border-radius: 42px; 
+            text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.08); perspective: 1200px; 
+        }
+        .neon-bar { 
+            position: absolute; top: 0; left: 0; height: 4px; 
+            background: var(--text); width: 0%; opacity: 0; z-index: 20; 
+            box-shadow: 0 0 15px var(--text); 
+        }
         
-        .main-logo { font-size: 2rem; letter-spacing: -0.5px; margin-bottom: 5px; }
-        .web { font-weight: 800; text-transform: uppercase; margin-right: -2px; }
+        .main-logo { font-size: 2.2rem; letter-spacing: -0.5px; margin-bottom: 5px; display: flex; justify-content: center; align-items: center;}
+        .web { font-weight: 800; text-transform: uppercase; margin-right: 2px; }
         .drop { font-weight: 300; font-style: italic; }
-        .typing-container { font-size: 0.75rem; color: #86868b; font-family: 'JetBrains Mono', monospace; min-height: 1.2rem; margin-bottom: 2rem; }
+        .typing-container { font-size: 0.8rem; color: #86868b; font-family: 'JetBrains Mono', monospace; min-height: 1.2rem; margin-bottom: 2.5rem; }
 
-        /* Multi-File Preview */
-        .preview-area { max-height: 220px; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 5px; }
-        .file-preview-box { background: var(--btn-sec); border: 1px solid var(--border); border-radius: 20px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 12px; text-align: left; transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; transform-style: preserve-3d; }
-        .file-preview-box.sent-anim { transform: rotateY(180deg) scale(0.8); opacity: 0; height: 0; margin: 0; padding: 0; border: none; }
-        .sent-overlay { position: absolute; inset: 0; background: var(--text); color: var(--bg); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; opacity: 0; transition: 0.4s; transform: rotateY(180deg); border-radius: 18px; letter-spacing: 2px; }
+        /* --- File Preview Box & 3D Animations --- */
+        .preview-area { 
+            max-height: 240px; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 8px; 
+        }
+        .preview-area::-webkit-scrollbar { width: 5px; }
+        .preview-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+
+        .file-preview-box { 
+            background: var(--btn-sec); border: 1px solid var(--border); 
+            border-radius: 20px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; 
+            margin-bottom: 12px; text-align: left; 
+            transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            position: relative; transform-style: preserve-3d; 
+        }
+        
+        /* 3D Rotate Animation Class */
+        .file-preview-box.sent-anim { 
+            transform: rotateY(180deg) scale(0.8); opacity: 0; height: 0; margin: 0; padding: 0; border-color: transparent; 
+        }
+        
+        .sent-overlay { 
+            position: absolute; inset: 0; background: var(--text); color: var(--bg); 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 800; font-size: 1.2rem; opacity: 0; transition: 0.4s ease; 
+            transform: rotateY(180deg); border-radius: 18px; letter-spacing: 2px; 
+        }
         .file-preview-box.success .sent-overlay { opacity: 1; }
         .file-preview-box.success .f-content { opacity: 0; }
-        .f-content { display: flex; align-items: center; gap: 12px; width: 100%; transition: 0.3s; }
-        .file-thumb { width: 42px; height: 42px; background: var(--border); border-radius: 10px; display: flex; justify-content: center; align-items: center; }
+
+        .f-content { display: flex; align-items: center; gap: 14px; width: 100%; transition: 0.3s ease; }
+        .file-thumb { 
+            width: 44px; height: 44px; background: var(--border); 
+            border-radius: 12px; display: flex; justify-content: center; align-items: center; color: var(--text);
+        }
         .f-info { overflow: hidden; width: 100%; }
-        .f-name { font-weight: 700; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; color: var(--text); }
-        .f-size { font-size: 0.65rem; color: #86868b; font-family: 'JetBrains Mono', monospace; }
+        .f-name { font-weight: 700; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; color: var(--text); }
+        .f-size { font-size: 0.7rem; color: #86868b; font-family: 'JetBrains Mono', monospace; margin-top: 3px; display: block;}
 
-        /* Inputs & Buttons */
-        button { width: 100%; padding: 1.2rem; margin-top: 10px; background: var(--accent); color: var(--bg); border: none; font-weight: 700; border-radius: 18px; cursor: pointer; font-size: 0.9rem; }
+        /* --- Buttons & Inputs --- */
+        button { 
+            width: 100%; padding: 1.2rem; margin-top: 12px; 
+            background: var(--accent); color: var(--bg); border: none; 
+            font-weight: 700; border-radius: 20px; cursor: pointer; font-size: 0.95rem; 
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        button:active { transform: scale(0.96); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
         .btn-outline { background: var(--btn-sec); color: var(--text); border: 1px solid var(--border); }
-        .btn-small { padding: 0.6rem 1rem; border-radius: 10px; font-size: 0.75rem; margin-top: 0; }
+        .btn-small { padding: 0.7rem 1.2rem; border-radius: 12px; font-size: 0.8rem; margin-top: 0; width: auto;}
         .hidden { display: none !important; }
-        input { width: 100%; padding: 1.2rem; background: var(--btn-sec); border: 1px solid var(--border); color: var(--text); text-align: center; font-size: 1.2rem; border-radius: 18px; outline: none; margin-bottom: 12px; font-weight: 600; }
-        .pin-box { font-size: 3.5rem; font-weight: 800; margin: 1rem 0; letter-spacing: 10px; color: var(--text); }
-        .made-with { font-size: 0.65rem; color: #86868b; font-weight: 600; margin-top: 2.5rem; }
+        
+        input { 
+            width: 100%; padding: 1.2rem; background: var(--btn-sec); 
+            border: 1px solid var(--border); color: var(--text); text-align: center; 
+            font-size: 1.3rem; border-radius: 20px; outline: none; margin-bottom: 15px; font-weight: 600; 
+        }
+        input::placeholder { color: #86868b; font-weight: 500;}
+        
+        .pin-box { font-size: 3.8rem; font-weight: 800; margin: 1.5rem 0; letter-spacing: 12px; color: var(--text); }
+        .made-with { font-size: 0.7rem; color: #86868b; font-weight: 600; margin-top: 3rem; }
 
-        /* Health Monitor */
-        #conn-monitor { position: fixed; bottom: 30px; right: 25px; width: 240px; background: var(--card-bg); backdrop-filter: blur(30px); border: 1px solid var(--border); border-radius: 24px; padding: 20px; z-index: 500; display: none; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        #pulse-graph { height: 40px; border-bottom: 1px solid var(--border); margin-bottom: 15px; display: flex; align-items: flex-end; gap: 3px; }
+        /* --- CPU Monitor UI --- */
+        #conn-monitor { 
+            position: fixed; bottom: 35px; right: 30px; width: 260px; 
+            background: var(--card-bg); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border); border-radius: 26px; padding: 22px; 
+            z-index: 500; display: none; text-align: left; box-shadow: 0 15px 40px rgba(0,0,0,0.1); 
+        }
+        #pulse-graph { height: 45px; border-bottom: 1px solid var(--border); margin-bottom: 18px; display: flex; align-items: flex-end; gap: 4px; }
 
-        /* QR Modal */
-        #qr-modal { display:none; position:fixed; inset:0; background:var(--bg); z-index:600; flex-direction:column; align-items:center; justify-content:center; }
-        #qr-typing { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.2rem; color: var(--text); margin-bottom: 30px; min-height: 1.5em; letter-spacing: 1px; }
-        #qrcode-container { background: white; padding: 20px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        /* --- QR Modal --- */
+        #qr-modal { 
+            display:none; position:fixed; inset:0; background:var(--bg); 
+            z-index:600; flex-direction:column; align-items:center; justify-content:center; 
+        }
+        #qr-typing { 
+            font-family: 'JetBrains Mono', monospace; font-weight: 700; 
+            font-size: 1.3rem; color: var(--text); margin-bottom: 35px; min-height: 1.5em; letter-spacing: 1.5px; 
+        }
+        #qrcode-container { background: white; padding: 25px; border-radius: 28px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body data-theme="light">
 
     <div id="g_id_onload"
-         data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+         data-client_id="281176157897-ubrns39thpulnev79aiucns44lggk9od.apps.googleusercontent.com"
          data-context="signin"
          data-ux_mode="popup"
          data-callback="handleGoogleResponse"
@@ -122,21 +265,26 @@
     </div>
 
     <div id="loader"><div class="spinner"></div></div>
-    <div id="intro"><div id="intro-content" class="glitch"><span class="web-i">WEB</span><span class="drop-i">drop</span></div></div>
+    <div id="intro">
+        <div id="intro-content" class="glitch">
+            <span class="web-i">WEB</span><span class="drop-i">drop</span>
+        </div>
+    </div>
 
     <div id="main-app">
+        
         <div class="top-nav">
             <div class="icon-btn" onclick="toggleMenu()">
-                <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/></svg>
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/></svg>
             </div>
             
             <div class="pulse-wrapper">
                 <div id="status-dot" class="dot-indicator"></div>
                 <div class="icon-btn" onclick="toggleMonitor()">
-                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M5 0a.5.5 0 0 1 .5.5V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2A2.5 2.5 0 0 1 14 4.5h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14a2.5 2.5 0 0 1-2.5 2.5v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14A2.5 2.5 0 0 1 2 11.5H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2A2.5 2.5 0 0 1 4.5 2V.5A.5.5 0 0 1 5 0m-.5 3A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13h7a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 11.5 3zM5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5zM6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"/></svg>
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M5 0a.5.5 0 0 1 .5.5V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2A2.5 2.5 0 0 1 14 4.5h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14a2.5 2.5 0 0 1-2.5 2.5v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14A2.5 2.5 0 0 1 2 11.5H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2A2.5 2.5 0 0 1 4.5 2V.5A.5.5 0 0 1 5 0m-.5 3A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13h7a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 11.5 3zM5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5zM6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"/></svg>
                 </div>
                 <div class="icon-btn" onclick="toggleTheme()">
-                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M7 8a3.5 3.5 0 0 1 3.5 3.555.5.5 0 0 0 .625.492A1.503 1.503 0 0 1 13 13.5a1.5 1.5 0 0 1-1.5 1.5H3a2 2 0 1 1 .1-3.998.5.5 0 0 0 .509-.375A3.5 3.5 0 0 1 7 8m4.473 3a4.5 4.5 0 0 0-8.72-.99A3 3 0 0 0 3 16h8.5a2.5 2.5 0 0 0 0-5z"/></svg>
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M7 8a3.5 3.5 0 0 1 3.5 3.555.5.5 0 0 0 .625.492A1.503 1.503 0 0 1 13 13.5a1.5 1.5 0 0 1-1.5 1.5H3a2 2 0 1 1 .1-3.998.5.5 0 0 0 .509-.375A3.5 3.5 0 0 1 7 8m4.473 3a4.5 4.5 0 0 0-8.72-.99A3 3 0 0 0 3 16h8.5a2.5 2.5 0 0 0 0-5z"/><path d="M11.286 1.778a.5.5 0 0 0-.565-.755 4.595 4.595 0 0 0-3.18 5.003 5.5 5.5 0 0 1 1.055.209A3.6 3.6 0 0 1 9.83 2.617a4.593 4.593 0 0 0 4.31 5.744 3.58 3.58 0 0 1-2.241.634q.244.477.394 1a4.59 4.59 0 0 0 3.624-2.04.5.5 0 0 0-.565-.755 3.593 3.593 0 0 1-4.065-5.422z"/></svg>
                 </div>
             </div>
         </div>
@@ -147,16 +295,15 @@
             
             <div id="auth-section" class="auth-card">
                 <div id="google-btn-wrapper">
-                    <p style="font-size: 0.8rem; font-weight: 600; margin-bottom:10px;">Save Devices & History</p>
-                    <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
-                    <button onclick="simulatedLogin()" class="btn-outline btn-small" style="margin-top: 10px;">Simulate Login (Test)</button>
+                    <p style="font-size: 0.85rem; font-weight: 600; margin-bottom:12px; color:var(--text);">Save Devices & History</p>
+                    <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="signin_with" data-size="large" data-logo_alignment="left"></div>
                 </div>
                 
                 <div id="profile-display" class="hidden">
                     <img id="user-avatar" class="profile-pic" src="" alt="User">
                     <div id="user-name" class="profile-name"></div>
                     <div id="user-email" class="profile-email"></div>
-                    <button onclick="logout()" class="btn-outline btn-small" style="margin-top: 10px; color: #ff3b30; border-color: #ff3b30;">Sign Out</button>
+                    <button onclick="logout()" class="btn-outline btn-small" style="margin-top: 15px; color: #ff3b30; border-color: #ff3b30;">Sign Out</button>
                 </div>
             </div>
 
@@ -173,12 +320,12 @@
         </div>
 
         <div id="conn-monitor">
-            <p style="font-size:0.65rem; letter-spacing:1.5px; color:#86868b; margin-bottom:12px; font-weight:700;">NODE HEALTH</p>
+            <p style="font-size:0.7rem; letter-spacing:1.5px; color:#86868b; margin-bottom:15px; font-weight:700;">NODE HEALTH</p>
             <div id="pulse-graph"></div>
-            <div style="font-family:'JetBrains Mono'; font-size:0.75rem; color:var(--text);">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">Status: <span id="stat-link" style="color:var(--status-on);">Standby</span></div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">Latency: <span id="stat-inflation">0.0 ms</span></div>
-                <div style="display:flex; justify-content:space-between;">Integrity: <span id="stat-integrity">100%</span></div>
+            <div style="font-family:'JetBrains Mono'; font-size:0.8rem; color:var(--text);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">Status: <span id="stat-link" style="color:var(--status-on); font-weight:600;">Standby</span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">Latency: <span id="stat-inflation" style="font-weight:600;">0.0 ms</span></div>
+                <div style="display:flex; justify-content:space-between;">Integrity: <span id="stat-integrity" style="font-weight:600;">100%</span></div>
             </div>
         </div>
 
@@ -198,9 +345,9 @@
             </div>
 
             <div id="receive-screen" class="hidden">
-                <p style="font-size: 0.75rem; color:#86868b; font-weight: 600;">YOUR UPLINK PIN</p>
+                <p style="font-size: 0.8rem; color:#86868b; font-weight: 700; letter-spacing:1px;">YOUR UPLINK PIN</p>
                 <div class="pin-box" id="my-pin">-----</div>
-                <button class="btn-outline" onclick="forceAction('home')">← ABORT SESSION</button>
+                <button class="btn-outline" onclick="forceAction('home')" style="margin-top: 2rem;">← ABORT SESSION</button>
             </div>
 
             <div id="send-screen" class="hidden">
@@ -225,18 +372,27 @@
     <div id="qr-modal">
         <div id="qr-typing"></div>
         <div id="qrcode-container"></div>
-        <button onclick="closeQR()" class="btn-outline" style="max-width:180px; margin-top:30px;">CLOSE</button>
+        <button onclick="closeQR()" class="btn-outline" style="max-width:200px; margin-top:35px;">CLOSE</button>
     </div>
 
     <script>
-        // System Config
+        // --- System Config ---
         const ID_PREFIX = "wd-navin-";
         let peer = null, conn = null, selectedFiles = [];
 
-        // Boot Sequence
+        // --- Boot Sequence ---
         window.addEventListener('load', () => {
-            setTimeout(()=> { document.getElementById("loader").classList.add("hide"); document.getElementById("intro").classList.add("show"); }, 1200);
-            setTimeout(()=> { document.getElementById("intro").style.display="none"; document.getElementById("main-app").classList.add("visible"); startTyping(); }, 3500);
+            setTimeout(()=> { 
+                document.getElementById("loader").classList.add("hide"); 
+                document.getElementById("intro").classList.add("show"); 
+            }, 1500);
+            
+            setTimeout(()=> { 
+                document.getElementById("intro").style.display="none"; 
+                document.getElementById("main-app").classList.add("visible");
+                startTyping();
+            }, 4000);
+            
             checkAuthStatus();
         });
 
@@ -250,18 +406,10 @@
             return JSON.parse(jsonPayload);
         }
 
-        // Called automatically by Google API on success
         function handleGoogleResponse(response) {
             const data = parseJwt(response.credential);
             const userProfile = { name: data.name, email: data.email, pic: data.picture };
             localStorage.setItem('webdrop_user', JSON.stringify(userProfile));
-            checkAuthStatus();
-        }
-
-        // Simulated Login for testing purposes since we don't have a real Client ID here
-        function simulatedLogin() {
-            const mockUser = { name: "Navin Chaudhary", email: "info.businessnavin@gmail.com", pic: "https://ui-avatars.com/api/?name=Navin+Chaudhary&background=000&color=fff" };
-            localStorage.setItem('webdrop_user', JSON.stringify(mockUser));
             checkAuthStatus();
         }
 
@@ -294,10 +442,9 @@
 
         function saveRecentConnection(pin) {
             let recents = JSON.parse(localStorage.getItem('webdrop_recents') || '[]');
-            // Remove if already exists to put it at top
             recents = recents.filter(r => r.pin !== pin);
             recents.unshift({ pin: pin, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-            if(recents.length > 3) recents.pop(); // Keep only last 3
+            if(recents.length > 3) recents.pop(); 
             localStorage.setItem('webdrop_recents', JSON.stringify(recents));
             renderRecentConnections();
         }
@@ -306,7 +453,7 @@
             const list = document.getElementById('recent-list');
             const recents = JSON.parse(localStorage.getItem('webdrop_recents') || '[]');
             list.innerHTML = "";
-            if(recents.length === 0) { list.innerHTML = "<div style='font-size:0.8rem; color:#86868b;'>No recent history.</div>"; return; }
+            if(recents.length === 0) { list.innerHTML = "<div style='font-size:0.8rem; color:#86868b; text-align:center;'>No history found</div>"; return; }
             
             recents.forEach(r => {
                 list.innerHTML += `<div class="recent-item"><span>Target: ${r.pin}</span><span style="color:#86868b;">${r.time}</span></div>`;
@@ -316,8 +463,8 @@
         // --- HAPTICS ENGINE ---
         function triggerHaptic(type) {
             if (!navigator.vibrate) return;
-            if (type === 'connect') navigator.vibrate([100, 30, 100, 30, 200]);
-            if (type === 'disconnect') navigator.vibrate([400, 100, 400]);
+            if (type === 'connect') navigator.vibrate([100, 30, 100, 30, 200]); 
+            if (type === 'disconnect') navigator.vibrate([400, 100, 400]); 
         }
 
         // --- MENU ROUTING ---
@@ -330,6 +477,7 @@
 
         function forceAction(action) {
             if(document.getElementById('side-menu').classList.contains('active')) toggleMenu(); 
+            
             setTimeout(() => {
                 if (action === 'home') {
                     if(conn) conn.close(); if(peer) peer.destroy();
@@ -337,7 +485,7 @@
                 } else if (action === 'share') {
                     const qr = document.getElementById('qrcode-container'); 
                     qr.innerHTML = ""; 
-                    new QRCode(qr, { text: window.location.href, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff" }); 
+                    new QRCode(qr, { text: window.location.href, width: 240, height: 240, colorDark: "#000000", colorLight: "#ffffff" }); 
                     document.getElementById('qr-modal').style.display='flex'; 
                     startQRTitle();
                 } else if (action === 'bug') {
@@ -347,7 +495,7 @@
                     setTimeout(() => {
                         if(conn) conn.close(); if(peer) peer.destroy();
                         window.location.reload();
-                    }, 400);
+                    }, 400); 
                 }
             }, 300);
         }
@@ -374,7 +522,7 @@
             const pin = document.getElementById('target-pin').value; 
             if(pin.length >= 5) { 
                 conn = peer.connect(ID_PREFIX + pin); 
-                saveRecentConnection(pin); // Save to local storage history
+                saveRecentConnection(pin); 
                 setupHandlers(); 
             }
         }
@@ -386,12 +534,16 @@
                 triggerHaptic('connect');
             });
             conn.on('data', data => {
-                const b = new Blob([data.file]); const a = document.createElement('a');
-                a.href = URL.createObjectURL(b); a.download = data.name; a.click();
+                const b = new Blob([data.file]); 
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(b); 
+                a.download = data.name; 
+                a.click();
             });
             conn.on('close', () => forceAction('terminate'));
         }
 
+        // --- File Handling & UI ---
         function updateFileList() {
             selectedFiles = Array.from(document.getElementById('file-input').files);
             const list = document.getElementById('preview-list');
@@ -404,7 +556,7 @@
                     <div class="sent-overlay">SENT</div>
                     <div class="f-content">
                         <div class="file-thumb">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/></svg>
+                            <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16"><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/></svg>
                         </div>
                         <div class="f-info">
                             <span class="f-name">${f.name}</span>
@@ -415,93 +567,154 @@
             });
         }
 
+        // --- Sequential Queue Animation ---
         async function transmitQueue() {
             const btn = document.getElementById('send-btn');
             const neon = document.getElementById('neon-progress');
             
             if(selectedFiles.length === 0) return;
-            btn.disabled = true; btn.innerText = "Transmitting...";
+            btn.disabled = true;
+            btn.innerText = "Transmitting...";
 
             for(let i=0; i<selectedFiles.length; i++) {
                 const f = selectedFiles[i];
                 const box = document.getElementById(`file-${i}`);
 
-                neon.style.transition = "none"; neon.style.width = "0%"; neon.style.opacity = "1";
+                // 1. Fire Neon Bar
+                neon.style.transition = "none"; 
+                neon.style.width = "0%"; 
+                neon.style.opacity = "1";
                 await new Promise(r => setTimeout(r, 50));
-                neon.style.transition = "width 2.5s linear"; neon.style.width = "100%";
+                neon.style.transition = "width 2.5s linear";
+                neon.style.width = "100%";
 
+                // Send Data
                 conn.send({ file: f, name: f.name });
+                
+                // Wait for bar to complete
                 await new Promise(r => setTimeout(r, 2500));
 
+                // 2. Rotate Box and show "SENT"
                 box.classList.add('success');
-                if (navigator.vibrate) navigator.vibrate(50); 
+                if (navigator.vibrate) navigator.vibrate(40); // Tiny tick per file
                 await new Promise(r => setTimeout(r, 600)); 
                 
+                // 3. Fade out and shrink box
                 box.classList.add('sent-anim');
-                neon.style.opacity = "0";
+                neon.style.opacity = "0"; 
                 await new Promise(r => setTimeout(r, 700));
                 
                 box.style.display = "none";
             }
             
-            btn.disabled = false; btn.innerText = "Transmit Data";
-            document.getElementById('file-input').value = ""; selectedFiles = [];
+            btn.disabled = false;
+            btn.innerText = "Transmit Data";
+            document.getElementById('file-input').value = "";
+            selectedFiles = [];
         }
 
-        // --- UI Effects ---
-        const quotes = ["Encrypting Payload...", "Zero Traces Left.", "P2P Protocol Active."];
+        // --- Header Typing Effect ---
+        const quotes = ["Encrypting Payload...", "Zero Traces Left.", "P2P Protocol Active.", "Establishing Tunnel..."];
         let qIdx = 0, charIdx = 0;
         function startTyping() {
             const el = document.getElementById("typing-line");
-            if (charIdx < quotes[qIdx].length) { el.innerHTML += quotes[qIdx].charAt(charIdx); charIdx++; setTimeout(startTyping, 80); } 
-            else { setTimeout(() => { el.innerHTML = ""; charIdx = 0; qIdx = (qIdx + 1) % quotes.length; startTyping(); }, 2500); }
+            if (charIdx < quotes[qIdx].length) { 
+                el.innerHTML += quotes[qIdx].charAt(charIdx); 
+                charIdx++; 
+                setTimeout(startTyping, 80); 
+            } else { 
+                setTimeout(() => { 
+                    el.innerHTML = ""; 
+                    charIdx = 0; 
+                    qIdx = (qIdx + 1) % quotes.length; 
+                    startTyping(); 
+                }, 2500); 
+            }
         }
 
+        // --- QR Modal Typing Effect ---
         let qrInterval;
         function startQRTitle() {
             const el = document.getElementById("qr-typing");
             const text = "SCAN TO CLONE";
-            let i = 0; el.innerHTML = "";
-            qrInterval = setInterval(() => { el.innerHTML += text[i]; i++; if(i >= text.length) { setTimeout(() => { el.innerHTML = ""; i = 0; }, 1500); } }, 150);
+            let i = 0;
+            el.innerHTML = "";
+            qrInterval = setInterval(() => {
+                el.innerHTML += text[i];
+                i++;
+                if(i >= text.length) { setTimeout(() => { el.innerHTML = ""; i = 0; }, 1500); }
+            }, 150);
         }
         function closeQR() { document.getElementById('qr-modal').style.display='none'; clearInterval(qrInterval); }
 
+        // --- CPU Monitor Simulation ---
         let monitorInterval;
         function toggleMonitor() {
             const mon = document.getElementById('conn-monitor');
-            if (mon.style.display === 'block') { mon.style.display = 'none'; clearInterval(monitorInterval); } 
-            else { mon.style.display = 'block'; startHealthTracking(); }
+            if (mon.style.display === 'block') {
+                mon.style.display = 'none';
+                clearInterval(monitorInterval);
+            } else {
+                mon.style.display = 'block';
+                startHealthTracking();
+            }
         }
 
         function startHealthTracking() {
             const graph = document.getElementById('pulse-graph');
             monitorInterval = setInterval(() => {
                 if(!conn || !conn.open) { 
-                    document.getElementById('stat-link').innerText = "Standby"; document.getElementById('stat-link').style.color = "var(--status-off)"; return; 
+                    document.getElementById('stat-link').innerText = "Standby"; 
+                    document.getElementById('stat-link').style.color = "var(--status-off)";
+                    return; 
                 }
                 const jitter = Math.random() * 5;
-                document.getElementById('stat-link').innerText = "Optimal"; document.getElementById('stat-link').style.color = "var(--status-on)";
+                document.getElementById('stat-link').innerText = "Optimal";
+                document.getElementById('stat-link').style.color = "var(--status-on)";
                 document.getElementById('stat-inflation').innerText = (12 + jitter).toFixed(1) + " ms";
                 document.getElementById('stat-integrity').innerText = (100 - jitter).toFixed(0) + "%";
                 
                 const bar = document.createElement('div');
-                bar.style.cssText = `width:5px; height:${Math.max(8, jitter*7)}px; background:var(--text); border-radius:2px; opacity:0.6; transition: 0.2s;`;
+                bar.style.cssText = `width:5px; height:${Math.max(8, jitter*8)}px; background:var(--text); border-radius:3px; opacity:0.7; transition: 0.2s ease;`;
                 graph.appendChild(bar);
-                if(graph.children.length > 25) graph.removeChild(graph.children[0]);
+                if(graph.children.length > 30) graph.removeChild(graph.children[0]);
             }, 800);
         }
 
-        const canvas = document.getElementById('particle-canvas'); const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        // --- Canvas Particle Engine ---
+        const canvas = document.getElementById('particle-canvas'); 
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
         let particles = [];
-        for(let i=0; i<35; i++) particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.8, vy: (Math.random() - 0.5) * 0.8 });
+        for(let i=0; i<45; i++) {
+            particles.push({
+                x: Math.random() * canvas.width, 
+                y: Math.random() * canvas.height, 
+                vx: (Math.random() - 0.5) * 0.7, 
+                vy: (Math.random() - 0.5) * 0.7
+            });
+        }
+        
         function loop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = document.body.dataset.theme === 'dark' ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.08)";
+            ctx.fillStyle = document.body.dataset.theme === 'dark' ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.1)";
             particles.forEach(p => {
-                p.x += p.vx; p.y += p.vy;
-                if(p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) { p.x = Math.random() * canvas.width; p.y = Math.random() * canvas.height; }
-                ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
+                p.x += p.vx; 
+                p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) { 
+                    p.x = Math.random() * canvas.width; 
+                    p.y = Math.random() * canvas.height; 
+                }
+                ctx.beginPath(); 
+                ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); 
+                ctx.fill();
             });
             requestAnimationFrame(loop);
         }
