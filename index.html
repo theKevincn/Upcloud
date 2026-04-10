@@ -13,7 +13,6 @@
     <style>
         :root {
             --bg: #ffffff; --text: #000000; 
-            /* Lower opacity for better video visibility */
             --card-bg: rgba(255, 255, 255, 0.35); 
             --border: rgba(0, 0, 0, 0.15); 
             --btn-sec: rgba(245, 245, 247, 0.5); 
@@ -23,7 +22,6 @@
 
         [data-theme="dark"] {
             --bg: #050505; --text: #ffffff; 
-            /* Lower opacity for dark mode */
             --card-bg: rgba(15, 15, 15, 0.45); 
             --border: rgba(255, 255, 255, 0.15); 
             --btn-sec: rgba(30, 30, 30, 0.5); 
@@ -51,7 +49,6 @@
         .web-i { font-weight: 800; text-transform: uppercase; margin-right: 2px; }
         .drop-i { font-weight: 300; font-style: italic; }
 
-        /* App starts as display:none to fix flash glitch */
         #main-app { display: none; opacity: 0; transition: opacity 1s ease; width: 100%; justify-content: center; align-items: center; }
         #main-app.visible { opacity: 1; }
 
@@ -78,7 +75,7 @@
         .menu-item { padding: 18px 0; border-bottom: 1px solid var(--border); cursor: pointer; font-weight: 600; font-size: 1rem; color: var(--text); transition: opacity 0.2s ease; }
         .menu-item:active { opacity: 0.5; }
 
-        /* Auth & Profile System */
+        /* Auth System */
         .auth-card { background: var(--btn-sec); border: 1px solid var(--border); border-radius: 22px; padding: 25px; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
         .profile-pic { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-bottom: 5px; }
         .profile-name { font-weight: 800; font-size: 1.1rem; color: var(--text); }
@@ -92,7 +89,6 @@
         .log-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
 
         /* --- Main Card Architecture --- */
-        /* Lower blur for crystal clear video visibility */
         .card { position: relative; background: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--border); padding: 3.5rem 2.5rem; width: 92%; max-width: 400px; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; border-radius: 42px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.2); perspective: 1200px; }
         .neon-bar { position: absolute; top: 0; left: 0; height: 4px; background: var(--text); width: 0%; opacity: 0; z-index: 20; box-shadow: 0 0 15px var(--text); }
         
@@ -131,7 +127,7 @@
         .pin-box { font-size: 3.8rem; font-weight: 800; margin: 1.5rem 0; letter-spacing: 12px; color: var(--text); }
         .made-with { font-size: 0.7rem; color: #86868b; font-weight: 600; margin-top: 2rem; }
 
-        /* --- Modals (QR) --- */
+        /* --- Modals --- */
         .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:600; flex-direction:column; align-items:center; justify-content:center; padding: 20px; backdrop-filter: blur(5px); }
         .modal-content { width: 100%; max-width: 350px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 30px; text-align: center; backdrop-filter: blur(15px); }
 
@@ -151,7 +147,7 @@
     </div>
 
     <video id="video-bg" autoplay loop muted playsinline>
-        <source src="https://res.cloudinary.com/dmjoso48w/video/upload/v1775811948/Video-416_xkpej7.mp4" type="video/mp4">
+        <source id="video-source" src="https://res.cloudinary.com/dmjoso48w/video/upload/v1775815552/lv_0_20260410152222_b1ulmk.mp4" type="video/mp4">
     </video>
 
     <div id="loader"><div class="spinner"></div></div>
@@ -173,14 +169,22 @@
                 
                 <div class="volume-container">
                     <div id="speaker-icon" onclick="toggleMute()" style="cursor:pointer; display:flex; color: var(--text);">
-                        <svg id="svg-speaker" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06zM6 5.04L4.312 6.39A.5.5 0 0 1 4 6.5H2v3h2a.5.5 0 0 1 .312.11L6 10.96V5.04z"/><path id="speaker-waves" d="M11.536 14.01a.5.5 0 0 1-.732-.68 7 7 0 0 0 0-10.66.5.5 0 1 1 .732-.68 8 8 0 0 1 0 12.02z" style="display:none;"/></svg>
+                        <svg id="svg-volume-mute" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-volume-mute" viewBox="0 0 16 16">
+                            <path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06M6 5.04 4.312 6.39A.5.5 0 0 1 4 6.5H2v3h2a.5.5 0 0 1 .312.11L6 10.96zm7.854.606a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0"/>
+                        </svg>
+                        <svg id="svg-volume-on" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-volume-down-fill" viewBox="0 0 16 16" style="display:none;">
+                            <path d="M9 4a.5.5 0 0 0-.812-.39L5.825 5.5H3.5A.5.5 0 0 0 3 6v4a.5.5 0 0 0 .5.5h2.325l2.363 1.89A.5.5 0 0 0 9 12zm3.025 4a4.5 4.5 0 0 1-1.318 3.182L10 10.475A3.5 3.5 0 0 0 11.025 8 3.5 3.5 0 0 0 10 5.525l.707-.707A4.5 4.5 0 0 1 12.025 8"/>
+                        </svg>
                     </div>
                     <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0">
                 </div>
 
-                <div class="icon-btn" onclick="toggleMonitor()">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M5 0a.5.5 0 0 1 .5.5V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2A2.5 2.5 0 0 1 14 4.5h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14a2.5 2.5 0 0 1-2.5 2.5v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14A2.5 2.5 0 0 1 2 11.5H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2A2.5 2.5 0 0 1 4.5 2V.5A.5.5 0 0 1 5 0m-.5 3A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13h7a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 11.5 3zM5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5zM6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"/></svg>
+                <div class="icon-btn" onclick="toggleVideoTheme()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-palette-fill" viewBox="0 0 16 16">
+                        <path d="M12.433 10.07C14.133 10.585 16 11.15 16 8a8 8 0 1 0-8 8c1.996 0 1.826-1.504 1.649-3.08-.124-1.101-.252-2.237.351-2.92.465-.527 1.42-.237 2.433.07M8 5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m4.5 3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3M5 6.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m.5 6.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+                    </svg>
                 </div>
+
                 <div class="icon-btn" onclick="toggleTheme()">
                     <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M7 8a3.5 3.5 0 0 1 3.5 3.555.5.5 0 0 0 .625.492A1.503 1.503 0 0 1 13 13.5a1.5 1.5 0 0 1-1.5 1.5H3a2 2 0 1 1 .1-3.998.5.5 0 0 0 .509-.375A3.5 3.5 0 0 1 7 8m4.473 3a4.5 4.5 0 0 0-8.72-.99A3 3 0 0 0 3 16h8.5a2.5 2.5 0 0 0 0-5z"/><path d="M11.286 1.778a.5.5 0 0 0-.565-.755 4.595 4.595 0 0 0-3.18 5.003 5.5 5.5 0 0 1 1.055.209A3.6 3.6 0 0 1 9.83 2.617a4.593 4.593 0 0 0 4.31 5.744 3.58 3.58 0 0 1-2.241.634q.244.477.394 1a4.59 4.59 0 0 0 3.624-2.04.5.5 0 0 0-.565-.755 3.593 3.593 0 0 1-4.065-5.422z"/></svg>
                 </div>
@@ -283,6 +287,21 @@
         const ID_PREFIX = "wd-navin-";
         let peer = null, conn = null, selectedFiles = [];
 
+        // --- Video Theme Array & Logic ---
+        // Add as many video links as you want inside this array
+        const videoThemes = [
+            "https://res.cloudinary.com/dmjoso48w/video/upload/v1775815552/lv_0_20260410152222_b1ulmk.mp4",
+            "https://res.cloudinary.com/dmjoso48w/video/upload/v1775815550/lv_0_20260410152526_q3jsvz.mp4"
+        ];
+        let currentVideoIdx = 0;
+
+        function toggleVideoTheme() {
+            currentVideoIdx = (currentVideoIdx + 1) % videoThemes.length;
+            const videoBg = document.getElementById('video-bg');
+            videoBg.src = videoThemes[currentVideoIdx];
+            videoBg.play();
+        }
+
         // --- Video Audio Controls ---
         const video = document.getElementById('video-bg');
         const slider = document.getElementById('volume-slider');
@@ -299,8 +318,15 @@
             updateSpeakerIcon();
         });
         function updateSpeakerIcon() {
-            const waves = document.getElementById('speaker-waves');
-            waves.style.display = video.muted ? 'none' : 'block';
+            const muteSvg = document.getElementById('svg-volume-mute');
+            const onSvg = document.getElementById('svg-volume-on');
+            if (video.muted) {
+                muteSvg.style.display = 'block';
+                onSvg.style.display = 'none';
+            } else {
+                muteSvg.style.display = 'none';
+                onSvg.style.display = 'block';
+            }
         }
 
         // --- Boot Sequence (Glitch Fixed) ---
@@ -318,7 +344,7 @@
                 document.getElementById("intro").style.display = "none";
                 
                 const mainApp = document.getElementById("main-app");
-                mainApp.style.display = "flex"; // Show only after intro
+                mainApp.style.display = "flex"; 
                 void mainApp.offsetWidth; // Trigger reflow
                 mainApp.classList.add("visible");
                 
